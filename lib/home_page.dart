@@ -1,63 +1,61 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:otp_test/home_page_bloc/home_page_bloc.dart';
 
 class MyLoginPage extends StatefulWidget {
+  const MyLoginPage({super.key});
+
   @override
   _MyLoginPageState createState() => _MyLoginPageState();
 }
 
 class _MyLoginPageState extends State<MyLoginPage> {
-  String _phoneNumber = "";
-  String _verificationCode = "";
-
-  Future<void> _verifyPhoneNumber() async {
-    await FirebaseAuth.instance.verifyPhoneNumber(
-      phoneNumber: _phoneNumber,
-      verificationCompleted: (PhoneAuthCredential credential) {
-        // Auto verification if possible (e.g., instant phone number detection)
-      },
-      verificationFailed: (FirebaseAuthException e) {
-        // Handle verification failure
-      },
-      codeAutoRetrievalTimeout: (String verificationId) {
-        // Called when the auto-retrieval timer expires
-      },
-      codeSent: (String verificationId, int? forceResendingToken) {},
-    );
-  }
-
-  Future<void> _signInWithPhoneNumber() async {
-    AuthCredential credential = PhoneAuthProvider.credential(
-      verificationId: _verificationCode,
-      smsCode: _verificationCode,
-    );
-
-    // Sign in with the credential
-    await FirebaseAuth.instance.signInWithCredential(credential);
-  }
-
+  late String phoneNumber;
+  late String smsCode;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
-          TextFormField(
-            onChanged: (value) => _phoneNumber = value,
-            decoration: const InputDecoration(labelText: "Phone Number"),
+    return BlocProvider(
+      create: (context) => HomePageBloc(),
+      child: SafeArea(
+        child: Scaffold(
+          body: BlocBuilder<HomePageBloc, HomePageState>(
+            builder: (context, state) {
+              if (state is Success) {
+                return const Center(
+                  child: Text('SUCCESS!!!'),
+                );
+              } else {
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextFormField(
+                      onChanged: (value) => phoneNumber = value,
+                      decoration:
+                          const InputDecoration(labelText: "Phone Number"),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        context.read<HomePageBloc>().add(SendOtp(phoneNumber));
+                      },
+                      child: const Text("Send OTP"),
+                    ),
+                    TextFormField(
+                      onChanged: (value) => smsCode = value,
+                      decoration:
+                          const InputDecoration(labelText: "Verification Code"),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        context.read<HomePageBloc>().add(SignIn(smsCode));
+                      },
+                      child: const Text("Sign In"),
+                    ),
+                  ],
+                );
+              }
+            },
           ),
-          ElevatedButton(
-            onPressed: _verifyPhoneNumber,
-            child: const Text("Send OTP"),
-          ),
-          TextFormField(
-            onChanged: (value) => _verificationCode = value,
-            decoration: const InputDecoration(labelText: "Verification Code"),
-          ),
-          ElevatedButton(
-            onPressed: _signInWithPhoneNumber,
-            child: const Text("Sign In"),
-          ),
-        ],
+        ),
       ),
     );
   }
