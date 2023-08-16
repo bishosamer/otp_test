@@ -62,12 +62,12 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyB3XhYhZ4IgKTaeUiSICR9qeQReh5fq6OM',
-    appId: '1:280438892859:ios:ac22ddd32255e72c6c6f1e',
+    appId: '1:280438892859:ios:4e0dc381723943026c6f1e',
     messagingSenderId: '280438892859',
     projectId: 'otp-test-fbef7',
     storageBucket: 'otp-test-fbef7.appspot.com',
-    iosClientId: '280438892859-r8uotucpn4gj6n2gip95ilrbgv2adrrh.apps.googleusercontent.com',
-    iosBundleId: 'com.example.otpTest',
+    iosClientId: '280438892859-mtl02nm8mbhgajfg86eusu297bu6vmre.apps.googleusercontent.com',
+    iosBundleId: 'com.ishakdev.otpTest',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
